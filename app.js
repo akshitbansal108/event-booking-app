@@ -3,7 +3,11 @@ const bodyParser = require('body-parser');
 const { graphqlHTTP } = require('express-graphql');
 const { buildSchema } = require('graphql');
 
-const events = [];
+const mongoose = require('mongoose');
+const Event = require('./models/event');
+
+const dotenv = require('dotenv');
+dotenv.config();
 
 const app = express();
 
@@ -36,21 +40,39 @@ app.use('/home', graphqlHTTP({
   `),
   rootValue: {
     events: () => {
-      return events;
+      return Event.find().then(
+        events => {
+          return events.map(event => {
+            return { ...event._doc, _id: event.id };
+          });
+        }
+      ).catch(err => {
+        console.log(err);
+      });
     },
     createEvent: (args) => {
-      const event = {
-        _id: Math.random().toString(),
+      const event = new Event({
         title: args.eventInput.title,
         description: args.eventInput.description,
         ticket: +args.eventInput.ticket,
-        date: new Date().toISOString()
-      };
-      events.push(event);
+        date: new Date()
+      });
+      event.save().then(
+        res => {
+          return { ...res._doc, _id: res._doc._id.toString() };
+        }
+      ).catch(err => {
+        console.log(err)
+      })
       return event;
     }
   },
   graphiql: true
 }));
 
-app.listen(3000);
+mongoose.connect(process.env.MONGO_CONNECTION_URL, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  app.listen(3000);
+});
