@@ -7,12 +7,15 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config();
 
+const authGuard = require("./guards/auth.guard");
 const graphqlSchema = require('./graphql/schema/index');
 const graphqlResolvers = require('./graphql/resolvers/index');
 
 const app = express();
 
 app.use(bodyParser.json());
+
+app.use(authGuard);
 
 app.use('/home', graphqlHTTP({
   schema: graphqlSchema,
