@@ -2,7 +2,7 @@ import React from "react";
 import "./App.css";
 import { BrowserRouter, Route, Switch, Redirect } from "react-router-dom";
 
-import AuthPage from "./pages/auth.page";
+import AuthPage from "./pages/Auth/Auth";
 import BookingsPage from "./pages/booking.page";
 import EventsPage from "./pages/event.page";
 

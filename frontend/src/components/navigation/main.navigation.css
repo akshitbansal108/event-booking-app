@@ -13,6 +13,7 @@
 .navigation__head h1 {
   margin: 0;
   font-size: 1.5rem;
+  color: white;
 }
 
 .navigation__items {
@@ -31,12 +32,12 @@
 }
 
 .navigation__items a {
-  color: antiquewhite;
+  color: white;
   text-decoration: none;
 }
 
 .navigation__items a:hover,
 .navigation__items a:active,
 .navigation__items a.active {
-  color: rgb(179, 179, 57);
+  color: black;
 }
