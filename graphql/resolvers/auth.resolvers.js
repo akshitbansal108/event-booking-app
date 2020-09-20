@@ -22,21 +22,27 @@ module.exports = {
     }
   },
   login: async ({ email, password }) => {
-    const userData = await User.findOne({ email: email });
-    if (!userData) {
-      throw new Error("Invalid Credentials");
-    }
-    const passwordVerified = await bcrypt.compare(password, userData.password);
-    if (!passwordVerified) {
-      throw new Error("Invalid Credentials");
-    }
-    const token = jwt.sign(
-      { userId: userData.id, email: userData.email },
-      process.env.SECRET_KEY,
-      {
-        expiresIn: "1h",
+    try {
+      const userData = await User.findOne({ email: email });
+      if (!userData) {
+        throw new Error("Invalid Credentials");
       }
-    );
-    return { userId: userData.id, token, tokenExpiration: 1 };
+
+      const passwordVerified = await bcrypt.compare(password, userData.password);
+      if (!passwordVerified) {
+        throw new Error("Invalid Credentials");
+      }
+      
+      const token = jwt.sign(
+        { userId: userData.id, email: userData.email },
+        process.env.SECRET_KEY,
+        {
+          expiresIn: "1h",
+        }
+      );
+      return { userId: userData.id, token: token, tokenExpiration: 1 };
+    } catch (err) {
+      throw err;
+    }
   },
 };
