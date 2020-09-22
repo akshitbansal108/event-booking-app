@@ -6,7 +6,7 @@ import AuthPage from "./pages/Auth/Auth";
 import BookingsPage from "./pages/Bookings/bookings";
 import EventsPage from "./pages/Events/events";
 
-import MainNavigation from "./components/navigation/main.navigation";
+import Navigation from "./components/navigation/navigation";
 import AuthContext from "./context/auth.context";
 
 class App extends Component {
@@ -39,7 +39,7 @@ class App extends Component {
             login: this.login,
             logout: this.logout
           }}>
-            <MainNavigation />
+            <Navigation />
             <main className="main-content">
               <Switch>
                 {!this.state.token && <Route path="/auth" component={AuthPage} />}

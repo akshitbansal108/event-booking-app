@@ -3,35 +3,3 @@
   max-width: 80rem;
   margin: 5rem auto;
 }
-
-.form-input label,
-.form-input input {
-  width: 100%;
-  display: block;
-}
-
-.form-input label {
-  margin-bottom: 0.5rem;
-}
-
-.form-input {
-  margin-bottom: 1rem;
-}
-
-.form-actions button {
-  background: brown;
-  font: inherit;
-  border: 1px solid brown;
-  border-radius: 5px;
-  padding: 0.5rem 1rem;
-  margin-right: 1rem;
-  box-shadow: 1px 1px 5px black;
-  color: white;
-  cursor: pointer;
-}
-
-.form-actions button:hover,
-.form-actions button:active {
-  background: brown;
-  border-color: white;
-}
