@@ -24,7 +24,7 @@ module.exports = {
         description: args.eventInput.description,
         ticket: +args.eventInput.ticket,
         date: new Date(args.eventInput.date),
-        creator: "5f58fdee5d5d6448be380b93",
+        creator: req.userId,
       });
       const creator = await User.findById(event.creator);
       if (!creator) {

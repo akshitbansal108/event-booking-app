@@ -137,7 +137,11 @@ class EventsPage extends Component {
         return res.json();
       })
       .then((resData) => {
-        console.log(resData);
+        // console.log(resData.data.createEvent);
+        // this.setState((prevState) => {
+        //   return { events: prevState.events.push(resData.data.createEvent) };
+        // });
+        this.getEvents();
       })
       .catch((err) => {
         console.log(err);
@@ -145,13 +149,13 @@ class EventsPage extends Component {
   };
 
   render() {
-    const eventList = this.state.events.map(event => {
+    const eventList = this.state.events.map((event) => {
       return (
-        <div className="events__list_item">
-          Title: {event.title}: {event.description}
-        </div>
-      )
-    })
+        <li key={event._id} className="events__list_item">
+          <b>{event.title}</b>: {event.description}
+        </li>
+      );
+    });
 
     return (
       <React.Fragment>
@@ -170,7 +174,7 @@ class EventsPage extends Component {
                 <input type="title" id="title" ref={this.titleElement} />
               </div>
               <div className="form-input">
-                <label htmlFor="ticket">Ticket</label>
+                <label htmlFor="ticket">Ticket Price (in INR)</label>
                 <input type="ticket" id="ticket" ref={this.ticketElement} />
               </div>
               <div className="form-input">
@@ -196,9 +200,7 @@ class EventsPage extends Component {
             </button>
           </div>
         )}
-        <ul className="event__list">
-          {eventList}
-        </ul>
+        <ul className="event__list">{eventList}</ul>
       </React.Fragment>
     );
   }

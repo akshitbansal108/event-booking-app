@@ -23,7 +23,7 @@ module.exports = {
         throw new Error("User not authenticated");
       }
       const bookedEvent = await Event.findById(args.eventId);
-      const userId = "5f58fdee5d5d6448be380b93";
+      const userId = req.userId;
       const booking = new Booking({
         event: bookedEvent.id,
         user: userId,
