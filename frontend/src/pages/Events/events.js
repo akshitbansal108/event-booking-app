@@ -5,11 +5,15 @@ import "./events.css";
 import Backdrop from "../../components/backdrop/backdrop";
 import Modal from "../../components/modal/modal";
 import AuthContext from "../../context/auth.context";
+import EventList from "../../components/events/event-list/event-list";
+import Spinner from "../../components/spinner/spinner";
 
 class EventsPage extends Component {
   state = {
     creatingEvent: false,
     events: [],
+    selectedEvent: null,
+    isLoading: false,
   };
 
   static contextType = AuthContext;
@@ -35,10 +39,14 @@ class EventsPage extends Component {
   cancelHandler = () => {
     this.setState({
       creatingEvent: false,
+      selectedEvent: null,
     });
   };
 
   getEvents = () => {
+    this.setState({
+      isLoading: true,
+    });
     const requestBody = {
       query: `
           query {
@@ -50,7 +58,6 @@ class EventsPage extends Component {
               description
               creator {
                 _id
-                email
               }
             }
           }
@@ -73,10 +80,14 @@ class EventsPage extends Component {
       .then((resData) => {
         this.setState({
           events: resData.data.events,
+          isLoading: false,
         });
       })
       .catch((err) => {
         console.log(err);
+        this.setState({
+          isLoading: false,
+        });
       });
   };
 
@@ -111,10 +122,6 @@ class EventsPage extends Component {
               date
               ticket
               description
-              creator {
-                _id
-                email
-              }
             }
           }
         `,
@@ -137,34 +144,50 @@ class EventsPage extends Component {
         return res.json();
       })
       .then((resData) => {
-        // console.log(resData.data.createEvent);
-        // this.setState((prevState) => {
-        //   return { events: prevState.events.push(resData.data.createEvent) };
-        // });
-        this.getEvents();
+        this.setState((prevState) => {
+          const updatedEvents = [...prevState.events];
+          updatedEvents.push({
+            _id: resData.data.createEvent._id,
+            title: resData.data.createEvent.title,
+            date: resData.data.createEvent.date,
+            ticket: resData.data.createEvent.ticket,
+            description: resData.data.createEvent.description,
+            creator: {
+              _id: this.context.userId,
+            },
+          });
+          return {
+            events: updatedEvents,
+          };
+        });
       })
       .catch((err) => {
         console.log(err);
       });
   };
 
-  render() {
-    const eventList = this.state.events.map((event) => {
-      return (
-        <li key={event._id} className="events__list_item">
-          <b>{event.title}</b>: {event.description}
-        </li>
-      );
-    });
+  bookEventHandler = () => {};
 
+  onViewDetail = (eventId) => {
+    this.setState((prevState) => {
+      const event = prevState.events.find((event) => event._id === eventId);
+      return {
+        selectedEvent: event,
+      };
+    });
+  };
+
+  render() {
     return (
       <React.Fragment>
-        {this.state.creatingEvent && <Backdrop />}
+        {(this.state.creatingEvent || this.state.selectedEvent) && <Backdrop />}
         {this.state.creatingEvent && (
           <Modal
             title="Create New Event"
             canCancel
             canConfirm
+            confirmText="Confirm"
+            cancelText="Cancel"
             onCancel={this.cancelHandler}
             onConfirm={this.confirmHandler}
           >
@@ -174,7 +197,7 @@ class EventsPage extends Component {
                 <input type="title" id="title" ref={this.titleElement} />
               </div>
               <div className="form-input">
-                <label htmlFor="ticket">Ticket Price (in INR)</label>
+                <label htmlFor="ticket">Ticket Price (in USD)</label>
                 <input type="ticket" id="ticket" ref={this.ticketElement} />
               </div>
               <div className="form-input">
@@ -192,6 +215,24 @@ class EventsPage extends Component {
             </form>
           </Modal>
         )}
+        {this.state.selectedEvent && (
+          <Modal
+            title="Event Details"
+            canCancel
+            canConfirm
+            confirmText="Book"
+            cancelText="Back"
+            onCancel={this.cancelHandler}
+            onConfirm={this.bookEventHandler}
+          >
+            <h1>{this.state.selectedEvent.title}</h1>
+            <h2>
+              ${this.state.selectedEvent.ticket} -{" "}
+              {new Date(this.state.selectedEvent.date).toLocaleDateString()}
+            </h2>
+            <p>{this.state.selectedEvent.description}</p>
+          </Modal>
+        )}
         {this.context.token && (
           <div className="events-control">
             <p>Share your own Events!</p>
@@ -200,7 +241,15 @@ class EventsPage extends Component {
             </button>
           </div>
         )}
-        <ul className="event__list">{eventList}</ul>
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+          <EventList
+            events={this.state.events}
+            authUserId={this.context.userId}
+            onViewDetail={this.onViewDetail}
+          />
+        )}
       </React.Fragment>
     );
   }
