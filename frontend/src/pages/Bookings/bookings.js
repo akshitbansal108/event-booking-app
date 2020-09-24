@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import BookingList from "../../components/bookings/booking-list/booking-list";
 import Spinner from "../../components/spinner/spinner";
 
 import AuthContext from "../../context/auth.context";
@@ -59,21 +60,73 @@ class BookingsPage extends Component {
       })
       .catch((err) => {
         console.log(err);
+        this.setState({
+          isLoading: false,
+        });
+      });
+  };
+
+  onBookingCancel = (bookingId) => {
+    this.setState({
+      isLoading: true,
+    });
+    const requestBody = {
+      query: `
+          mutation {
+            cancelBooking(bookingId: "${bookingId}") {
+              _id
+              title
+            }
+          }
+        `,
+    };
+
+    const token = this.context.token;
+
+    fetch("http://localhost:5000/home", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (res.status !== 200 && res.status !== 201) {
+          throw new Error("Failed!");
+        }
+        return res.json();
+      })
+      .then((resData) => {
+        this.setState((prevState) => {
+          const updatedBookings = this.state.bookings.filter((booking) => {
+            return booking._id !== bookingId;
+          });
+          return {
+            bookings: updatedBookings,
+            isLoading: false,
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        this.setState({
+          isLoading: false,
+        });
       });
   };
 
   render() {
-    const bookingsList = this.state.bookings.map((booking) => {
-      return (
-        <li key={booking._id}>
-          {booking.event.title} -{" "}
-          {new Date(booking.event.date).toLocaleDateString()}
-        </li>
-      );
-    });
     return (
       <React.Fragment>
-        {this.state.isLoading ? <Spinner /> : <ul>{bookingsList}</ul>}
+        {this.state.isLoading ? (
+          <Spinner />
+        ) : (
+          <BookingList
+            bookings={this.state.bookings}
+            onBookingCancel={this.onBookingCancel}
+          />
+        )}
       </React.Fragment>
     );
   }
