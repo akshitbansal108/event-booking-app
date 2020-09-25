@@ -38,6 +38,5 @@ mongoose.connect(process.env.MONGO_CONNECTION_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
-  console.log("Mongo Connection established");
   app.listen(5000);
 });
