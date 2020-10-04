@@ -42,7 +42,8 @@ const userDetails = async (userId) => {
       ...userData._doc,
       _id: userData.id,
       password: null,
-      createdEvents: () => eventDataLoader.loadMany(userData._doc.createdEvents),
+      createdEvents: () =>
+        eventDataLoader.loadMany(userData._doc.createdEvents),
     };
   } catch (err) {
     throw err;
@@ -52,6 +53,11 @@ const userDetails = async (userId) => {
 const eventDetails = async (eventIds) => {
   try {
     const eventData = await Event.find({ _id: { $in: eventIds } });
+    eventData.sort((a, b) => {
+      return (
+        eventIds.indexOf(a._id.toString()) - eventIds.indexOf(b._id.toString())
+      );
+    });
     return eventData.map((event) => {
       return transformEvent(event);
     });
