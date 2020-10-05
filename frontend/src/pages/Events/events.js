@@ -102,7 +102,7 @@ class EventsPage extends Component {
     });
 
     const title = this.titleElement.current.value;
-    const ticket = +this.ticketElement.current.value;
+    const ticket = +this.ticketElement.current.value; //+ sign makes it float
     const date = this.dateElement.current.value;
     const description = this.descriptionElement.current.value;
 
@@ -114,9 +114,6 @@ class EventsPage extends Component {
     ) {
       return;
     }
-
-    const event = { title, ticket, date, description };
-    console.log(event);
 
     const requestBody = {
       query: `
@@ -236,6 +233,9 @@ class EventsPage extends Component {
   }
 
   render() {
+    let presentDate = new Date();
+    presentDate.setMinutes(presentDate.getMinutes() - presentDate.getTimezoneOffset());
+    presentDate = presentDate.toISOString().slice(0, 16);
     return (
       <React.Fragment>
         {(this.state.creatingEvent || this.state.selectedEvent) && <Backdrop />}
@@ -260,7 +260,12 @@ class EventsPage extends Component {
               </div>
               <div className="form-input">
                 <label htmlFor="date">Date</label>
-                <input type="datetime-local" id="date" ref={this.dateElement} />
+                <input
+                  type="datetime-local"
+                  id="date"
+                  min={presentDate}
+                  ref={this.dateElement}
+                />
               </div>
               <div className="form-input">
                 <label htmlFor="description">Description</label>
