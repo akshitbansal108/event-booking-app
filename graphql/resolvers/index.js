@@ -5,5 +5,5 @@ const bookingResolver = require("./booking.resolvers");
 module.exports = {
   ...userResolver,
   ...eventResolver,
-  ...bookingResolver
+  ...bookingResolver,
 };

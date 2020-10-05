@@ -1,7 +1,10 @@
 const Event = require("../../models/event");
 const Booking = require("../../models/booking");
 
-const { transformBooking, transformEvent } = require("./helpers/transform.helper");
+const {
+  transformBooking,
+  transformEvent,
+} = require("./helpers/transform.helper");
 
 module.exports = {
   bookings: async (args, req) => {

@@ -6,7 +6,8 @@ const { transformEvent } = require("./helpers/transform.helper");
 module.exports = {
   events: async () => {
     try {
-      const events = await Event.find();
+      const presentDate = new Date();
+      const events = await Event.find({ date: { $gt: presentDate } });
       return events.map((event) => {
         return transformEvent(event);
       });
