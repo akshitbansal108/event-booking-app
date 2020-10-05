@@ -28,11 +28,14 @@ module.exports = {
         throw new Error("Invalid Credentials");
       }
 
-      const passwordVerified = await bcrypt.compare(password, userData.password);
+      const passwordVerified = await bcrypt.compare(
+        password,
+        userData.password
+      );
       if (!passwordVerified) {
         throw new Error("Invalid Credentials");
       }
-      
+
       const token = jwt.sign(
         { userId: userData.id, email: userData.email },
         process.env.SECRET_KEY,
