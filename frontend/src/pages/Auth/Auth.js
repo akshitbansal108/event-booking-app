@@ -84,6 +84,12 @@ class AuthPage extends Component {
             resData.data.login.userId,
             resData.data.login.tokenExpiration
           );
+          localStorage.setItem("token", resData.data.login.token);
+          localStorage.setItem("userId", resData.data.login.userId);
+          localStorage.setItem(
+            "tokenExpiration",
+            resData.data.login.tokenExpiration
+          );
         }
       })
       .catch((err) => {
