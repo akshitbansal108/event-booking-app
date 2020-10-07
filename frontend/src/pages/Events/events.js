@@ -152,6 +152,9 @@ class EventsPage extends Component {
         return res.json();
       })
       .then((resData) => {
+        if (!resData.data.createEvent) {
+          throw new Error("Failed");
+        }
         this.setState((prevState) => {
           const updatedEvents = [...prevState.events];
           updatedEvents.push({
