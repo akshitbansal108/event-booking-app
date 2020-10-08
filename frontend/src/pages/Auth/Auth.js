@@ -8,6 +8,8 @@ class AuthPage extends Component {
     isLoggedIn: true,
   };
 
+  invalidCredentials = false;
+
   static contextType = AuthContext;
 
   constructor(props) {
@@ -73,6 +75,7 @@ class AuthPage extends Component {
     })
       .then((res) => {
         if (res.status !== 200 && res.status !== 201) {
+          this.invalidCredentials = true;
           throw new Error("Failed!");
         }
         return res.json();
@@ -93,24 +96,31 @@ class AuthPage extends Component {
 
   render() {
     return (
-      <form className="auth-form" onSubmit={this.submitHandler}>
-        <div className="form-input">
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" ref={this.emailElement} />
-        </div>
-        <div className="form-input">
-          <label htmlFor="password">Password</label>
-          <input type="password" id="password" ref={this.passwordElement} />
-        </div>
-        <div className="form-actions">
-          <button type="submit">
-            {this.state.isLoggedIn ? "Login" : "Signup"}
-          </button>
-          <button type="button" onClick={this.switchHandler}>
-            Switch to {!this.state.isLoggedIn ? "Login" : "Signup"}
-          </button>
-        </div>
-      </form>
+      <React.Fragment>
+        <form className="auth-form" onSubmit={this.submitHandler}>
+          <div className="form-input">
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" ref={this.emailElement} />
+          </div>
+          <div className="form-input">
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" ref={this.passwordElement} />
+          </div>
+          <div className="form-actions">
+            <button type="submit">
+              {this.state.isLoggedIn ? "Login" : "Signup"}
+            </button>
+            <button type="button" onClick={this.switchHandler}>
+              Switch to {!this.state.isLoggedIn ? "Login" : "Signup"}
+            </button>
+          </div>
+        </form>
+        {this.invalidCredentials && (
+          <div>
+            <p className="error-message">Hello</p>
+          </div>
+        )}
+      </React.Fragment>
     );
   }
 }

@@ -1,5 +1,10 @@
 .auth-form {
   width: 25rem;
   max-width: 80rem;
-  margin: 5rem auto;
+  margin: 5rem auto 2rem auto;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
 }
