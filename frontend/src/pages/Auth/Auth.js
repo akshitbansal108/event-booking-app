@@ -10,6 +10,8 @@ class AuthPage extends Component {
 
   static contextType = AuthContext;
 
+  valid = true;
+
   constructor(props) {
     super(props);
     this.emailElement = React.createRef();
@@ -52,8 +54,9 @@ class AuthPage extends Component {
         query: `
           mutation CreateUser($email: String!, $password: String!) {
             createUser(userInput: {email: $email, password: $password}) {
-              _id
-              email
+              userId
+              token
+              tokenExpiration
             }
           }
         `,
@@ -78,18 +81,33 @@ class AuthPage extends Component {
         return res.json();
       })
       .then((resData) => {
-        if (resData.data.login.token) {
+        if (resData.data.login && resData.data.login.token) {
           this.context.login(
             resData.data.login.token,
             resData.data.login.userId,
             resData.data.login.tokenExpiration
           );
+        } else if (resData.data.createUser && resData.data.createUser.token) {
+          this.context.login(
+            resData.data.createUser.token,
+            resData.data.createUser.userId,
+            resData.data.createUser.tokenExpiration
+          );
+        }
+        if (this.valid) {
+          this.setState({
+            isLoggedIn: true,
+          });
         }
       })
       .catch((err) => {
         console.log(err);
       });
   };
+
+  componentWillUnmount() {
+    this.valid = false;
+  }
 
   render() {
     return (
